@@ -219,6 +219,17 @@ class RenderTemplatesTests(TestCase):
 
         self.assertEqual(result, "fóäo bar")
 
+    def test_spaceless(self):
+        template_content = "{% spaceless %} <span>foo</span> <span>bar</span> {% endspaceless %}"
+
+        request = self.factory.get('/customer/details')
+        context = RequestContext(request)
+
+        template = self.env.from_string(template_content)
+        result = template.render(context)
+
+        self.assertEqual(result, "<span>foo</span><span>bar</span>")
+
     def test_404_page(self):
         response = self.client.get(reverse("page-404"))
         self.assertEqual(response.status_code, 404)

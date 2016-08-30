@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-import traceback
 import logging
 
 import django
@@ -9,12 +8,9 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from django.core.cache import cache
 from django.core.urlresolvers import NoReverseMatch
 from django.core.urlresolvers import reverse
-from django.utils.formats import localize
-from django.utils.translation import pgettext
-from django.utils.translation import ugettext
+from django.utils.html import strip_spaces_between_tags
 from jinja2 import Markup
 from jinja2 import TemplateSyntaxError
-from jinja2 import lexer
 from jinja2 import nodes
 from jinja2.ext import Extension
 
@@ -137,6 +133,26 @@ class CacheExtension(Extension):
             value = force_text(value)
 
         return value
+
+
+class SpacelessExtension(Extension):
+
+    tags = set(['spaceless'])
+
+    def parse(self, parser):
+        lineno = parser.stream.expect('name:spaceless').lineno
+
+        body = parser.parse_statements(['name:endspaceless'], drop_needle=True)
+
+        return nodes.CallBlock(
+            self.call_method('_render', []),
+            [], [], body).set_lineno(lineno)
+
+    def _render(self, caller):
+        value = caller()
+        text = force_text(value)
+        return strip_spaces_between_tags(text.strip())
+
 
 class StaticFilesExtension(Extension):
     def __init__(self, environment):

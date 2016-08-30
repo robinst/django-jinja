@@ -8,6 +8,7 @@ DEFAULT_EXTENSIONS = [
     "django_jinja.builtins.extensions.CacheExtension",
     "django_jinja.builtins.extensions.TimezoneExtension",
     "django_jinja.builtins.extensions.UrlsExtension",
+    "django_jinja.builtins.extensions.SpacelessExtension",
     "django_jinja.builtins.extensions.StaticFilesExtension",
     "django_jinja.builtins.extensions.DjangoFiltersExtension",
 ]
